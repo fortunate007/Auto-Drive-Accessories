@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  partNumber  String   @unique
+  name        String
+  description String
+  price       Int // stored in KES, whole shillings
+  category    String // Interior | Electronics | Exterior | Care & Tools
+  icon        String // key the frontend maps to an SVG icon
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  txRef         String      @unique // sent to Flutterwave as tx_ref
+  customerName  String
+  customerEmail String
+  customerPhone String
+  totalAmount   Int
+  currency      String      @default("KES")
+  status        String      @default("pending") // pending | paid | failed
+  paymentMethod String? // card | mobilemoneyke | etc, filled after verification
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          Int    @id @default(autoincrement())
+  order       Order  @relation(fields: [orderId], references: [id])
+  orderId     Int
+  productId   Int
+  productName String
+  unitPrice   Int
+  quantity    Int
+}
