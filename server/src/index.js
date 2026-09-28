@@ -33,3 +33,6 @@ const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`Auto-Drive API running on http://localhost:${port}`);
 });
+app.get('/', (req, res) => {
+  res.json({ message: "Auto Drive Accessories API is running!" });
+});
